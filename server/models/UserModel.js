@@ -33,7 +33,6 @@ const userSchema = mongoose.Schema(
 		},
 		hashed_password: {
 			type: String,
-			minlength: 6,
 			required: [true, 'Please add a password'],
 		},
 

@@ -1,5 +1,3 @@
 exports.register = (req, res) => {
-	res.json({
-		data: 'you hit register endpoint',
-	});
+	console.log('CONSOLE LOG DATA', req.body);
 };

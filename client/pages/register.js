@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import Layout from '../components/Layout';
+import axios from 'axios';
 
 const Register = () => {
 	const [stateValues, setStateValues] = useState({
@@ -23,15 +24,21 @@ const Register = () => {
 
 	const submitHandler = (e) => {
 		e.preventDefault();
+		axios
+			.post(`http://localhost:5000/api/register`, {
+				name,
+				email,
+				password,
+			})
+			.then((response) => console.log(response))
+			.catch((err) => console.log(err));
 	};
 
 	const registerForm = () => (
 		<form onSubmit={submitHandler}>
 			<div className='form-group'>
 				<div className='mb-3'>
-					<label for='formPassword' className='form-label fw-bold'>
-						Name
-					</label>
+					<label className='form-label fw-bold'>Name</label>
 					<input
 						type='text'
 						value={name}
@@ -44,9 +51,7 @@ const Register = () => {
 			</div>
 			<div className='form-group'>
 				<div className='mb-3'>
-					<label for='formPassword' className='form-label fw-bold'>
-						Email
-					</label>
+					<label className='form-label fw-bold'>Email</label>
 					<input
 						type='email'
 						value={email}
@@ -59,9 +64,7 @@ const Register = () => {
 			</div>
 			<div className='form-group'>
 				<div className='mb-3'>
-					<label for='formPassword' className='form-label fw-bold'>
-						Password
-					</label>
+					<label className='form-label fw-bold'>Password</label>
 					<input
 						type='password'
 						value={password}
