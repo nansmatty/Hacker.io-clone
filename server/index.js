@@ -1,13 +1,11 @@
 const express = require('express');
-const dotenv = require('dotenv');
+require('dotenv').config();
 const morgan = require('morgan');
 const cors = require('cors');
 const authRoute = require('./routes/auth');
 const connectDB = require('./config/db');
 
 const app = express();
-
-dotenv.config();
 connectDB();
 
 app.use(morgan('dev'));
