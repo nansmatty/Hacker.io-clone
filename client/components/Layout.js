@@ -5,6 +5,7 @@ import NProgress from 'nprogress';
 import 'nprogress/nprogress.css';
 import 'bootstrap/dist/css/bootstrap.css';
 import { useRouter } from 'next/router';
+import { isAuthenticated, logout } from '../helpers/auth';
 
 const Layout = ({ children }) => {
 	const router = useRouter();
@@ -45,24 +46,61 @@ const Layout = ({ children }) => {
 					</a>
 				</Link>
 			</li>
-			<li className='nav-item'>
-				<Link href='/login'>
+			{!isAuthenticated() && (
+				<React.Fragment>
+					<li className='nav-item ms-auto'>
+						<Link href='/login'>
+							<a
+								className='nav-link text-white fw-bold'
+								style={{ letterSpacing: '1px' }}>
+								Login
+							</a>
+						</Link>
+					</li>
+					<li className='nav-item'>
+						<Link href='/register'>
+							<a
+								className='nav-link text-white fw-bold'
+								style={{ letterSpacing: '1px' }}>
+								Register
+							</a>
+						</Link>
+					</li>
+				</React.Fragment>
+			)}
+			{isAuthenticated() && isAuthenticated().role === 'admin' && (
+				<li className='nav-item ms-auto'>
+					<Link href='/admin'>
+						<a
+							className='nav-link text-white fw-bold'
+							style={{ letterSpacing: '1px' }}>
+							{isAuthenticated().name}
+						</a>
+					</Link>
+				</li>
+			)}
+
+			{isAuthenticated() && isAuthenticated().role === 'suscriber' && (
+				<li className='nav-item ms-auto'>
+					<Link href='/user'>
+						<a
+							className='nav-link text-white fw-bold'
+							style={{ letterSpacing: '1px' }}>
+							{isAuthenticated().name}
+						</a>
+					</Link>
+				</li>
+			)}
+			{isAuthenticated() && (
+				<li className='nav-item'>
 					<a
 						className='nav-link text-white fw-bold'
+						onClick={logout}
 						style={{ letterSpacing: '1px' }}>
-						Login
+						Logout
 					</a>
-				</Link>
-			</li>
-			<li className='nav-item'>
-				<Link href='/register'>
-					<a
-						className='nav-link text-white fw-bold'
-						style={{ letterSpacing: '1px' }}>
-						Register
-					</a>
-				</Link>
-			</li>
+				</li>
+			)}
 		</ul>
 	);
 

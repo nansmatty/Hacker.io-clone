@@ -89,3 +89,33 @@ exports.registerActivate = (req, res) => {
 		}
 	);
 };
+
+exports.login = (req, res) => {
+	const { email, password } = req.body;
+
+	User.findOne({ email }).exec((err, user) => {
+		if (err || !user) {
+			return res.status(400).json({
+				error: 'User does not exists!',
+			});
+		}
+
+		if (!user.authenticate(password)) {
+			return res.status(400).json({
+				error: 'Invalid Credentials!',
+			});
+		}
+
+		// Generate token and sent to client
+		const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
+			expiresIn: '1d',
+		});
+
+		const { _id, name, email, role } = user;
+
+		return res.json({
+			token,
+			user: { _id, name, email, role },
+		});
+	});
+};
