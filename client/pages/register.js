@@ -2,6 +2,7 @@ import { useState } from 'react';
 import Layout from '../components/Layout';
 import axios from 'axios';
 import { showErrorMessage, showSuccessMessage } from '../helpers/alert';
+import { API } from '../config';
 
 const Register = () => {
 	const [stateValues, setStateValues] = useState({
@@ -26,7 +27,7 @@ const Register = () => {
 	const submitHandler = async (e) => {
 		e.preventDefault();
 		try {
-			const response = await axios.post(`http://localhost:5000/api/register`, {
+			const response = await axios.post(`${API}/register`, {
 				name,
 				email,
 				password,
