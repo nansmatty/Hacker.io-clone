@@ -29,17 +29,18 @@ const ActivateAccount = ({ router }) => {
 
 	const clickSubmit = async (e) => {
 		e.preventDefault();
-		// console.log('Activate Account');
 		setUserState({ ...userState, buttonText: 'Activating' });
 		try {
-			const response = await axios.post(`${API}/register/activate`, { token });
+			const response = await axios.post(`${API}/register/activate`, {
+				tokenId,
+			});
 
 			setUserState({
 				...userState,
 				name: '',
-				token: '',
+				tokenId: '',
 				buttonText: 'Activated',
-				success: 'response.data,message',
+				success: response.data.message,
 			});
 		} catch (error) {
 			setUserState({

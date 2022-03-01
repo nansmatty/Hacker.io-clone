@@ -2,6 +2,7 @@ const AWS = require('aws-sdk');
 const User = require('../models/UserModel');
 const jwt = require('jsonwebtoken');
 const { registerEmailParams } = require('../utils/sendEmail');
+const { nanoid } = require('nanoid');
 
 AWS.config.update({
 	region: process.env.AWS_REGION,
@@ -49,4 +50,42 @@ exports.register = (req, res) => {
 				});
 			});
 	});
+};
+
+exports.registerActivate = (req, res) => {
+	const { tokenId } = req.body;
+
+	jwt.verify(
+		tokenId,
+		process.env.JWT_ACCOUNT_ACTIVATION,
+		function (err, decoded) {
+			if (err) {
+				return res.status(401).json({ error: 'Expired Link. Try Again' });
+			}
+
+			const { name, email, password } = jwt.decode(tokenId);
+			const username = nanoid(9);
+
+			User.findOne({ email }).exec((err, user) => {
+				if (user) {
+					return res.status(400).json({
+						error: 'Email is taken',
+					});
+				}
+
+				//register or save new user
+				const newUser = new User({ username, name, email, password });
+				newUser.save((err, user) => {
+					if (err) {
+						return res.status(400).json({
+							error: 'There is some problem. Please try again after sometimes',
+						});
+					}
+					return res.json({
+						message: 'Registration success. Please Login',
+					});
+				});
+			});
+		}
+	);
 };
