@@ -59,7 +59,6 @@ const Register = () => {
 						type='text'
 						value={name}
 						className='form-control'
-						placeholder='Name'
 						onChange={handleChange('name')}
 						autoComplete='true'
 					/>
@@ -72,7 +71,6 @@ const Register = () => {
 						type='email'
 						value={email}
 						className='form-control'
-						placeholder='Email Address'
 						onChange={handleChange('email')}
 						autoComplete='true'
 					/>
@@ -85,7 +83,6 @@ const Register = () => {
 						type='password'
 						value={password}
 						className='form-control'
-						placeholder='Password'
 						onChange={handleChange('password')}
 						autoComplete='true'
 					/>

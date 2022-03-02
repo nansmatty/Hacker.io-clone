@@ -51,7 +51,6 @@ const ForgotPassword = () => {
 					<input
 						type='email'
 						className='form-control'
-						placeholder='Email Address'
 						onChange={handleChange}
 						value={email}
 						autoComplete='true'
