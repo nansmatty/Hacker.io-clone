@@ -19,13 +19,13 @@ router.post('/register', userRegisterValidator, runValidations, register);
 router.post('/login', userLoginValidator, runValidations, login);
 router.post('/register/activate', registerActivate);
 router.put(
-	'/forgot-password',
+	'/password/forgot',
 	forgotPasswordValidator,
 	runValidations,
 	forgotPassword
 );
 router.put(
-	'/reset-password',
+	'/password/reset',
 	resetPasswordValidator,
 	runValidations,
 	resetPassword

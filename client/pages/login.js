@@ -79,6 +79,11 @@ const Login = () => {
 					<button className='btn btn-outline-success fw-bold'>Submit</button>
 				</div>
 			</div>
+			<div className='form-group'>
+				<Link href='/password/forgot'>
+					<a className='text-dark fw-bold'>Forgot Password</a>
+				</Link>
+			</div>
 		</form>
 	);
 
