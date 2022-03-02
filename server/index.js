@@ -3,6 +3,7 @@ require('dotenv').config();
 const morgan = require('morgan');
 const cors = require('cors');
 const authRoute = require('./routes/auth');
+const userRoute = require('./routes/user');
 const connectDB = require('./config/db');
 
 const app = express();
@@ -13,6 +14,7 @@ app.use(express.json());
 app.use(cors({ origin: process.env.CLIENT_URL }));
 
 app.use('/api', authRoute);
+app.use('/api', userRoute);
 
 const port = process.env.PORT || 5000;
 

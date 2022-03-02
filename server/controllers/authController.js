@@ -1,8 +1,8 @@
 const AWS = require('aws-sdk');
-const User = require('../models/UserModel');
 const jwt = require('jsonwebtoken');
-const { registerEmailParams } = require('../utils/sendEmail');
 const { nanoid } = require('nanoid');
+const User = require('../models/UserModel');
+const { registerEmailParams } = require('../utils/sendEmail');
 
 AWS.config.update({
 	region: process.env.AWS_REGION,
