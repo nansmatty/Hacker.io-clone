@@ -1,6 +1,7 @@
 const AWS = require('aws-sdk');
 const jwt = require('jsonwebtoken');
 const { nanoid } = require('nanoid');
+const _ = require('lodash');
 const User = require('../models/UserModel');
 const {
 	registerEmailParams,
@@ -171,5 +172,45 @@ exports.forgotPassword = (req, res) => {
 };
 
 exports.resetPassword = (req, res) => {
-	//
+	const { resetPasswordLink, newPassword } = req.body;
+
+	if (resetPasswordLink) {
+		jwt.verify(
+			resetPasswordLink,
+			process.env.JWT_RESET_PASSWORD,
+			(err, success) => {
+				if (err) {
+					return res.status(400).json({
+						error: 'Expired Link. Try again!',
+					});
+				}
+
+				User.findOne({ resetPasswordLink }).exec((err, user) => {
+					if (err || !user) {
+						return res.status(400).json({
+							error: 'Invalid token. Try again!',
+						});
+					}
+
+					const updatedFields = {
+						password: newPassword,
+						resetPasswordLink: '',
+					};
+
+					user = _.extend(user, updatedFields);
+					user.save((err, result) => {
+						if (err) {
+							return res.status(400).json({
+								error:
+									'There is some problem. Please try again after sometimes',
+							});
+						}
+						return res.json({
+							message: 'Reset password success. Please login with new password',
+						});
+					});
+				});
+			}
+		);
+	}
 };
