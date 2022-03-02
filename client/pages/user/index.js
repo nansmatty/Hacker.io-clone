@@ -7,7 +7,7 @@ const User = ({ user }) => {
 	return (
 		<Layout>
 			<h1>UserPage</h1>
-			{JSON.stringify(user)}
+			<p>{JSON.stringify(user)}</p>
 		</Layout>
 	);
 };

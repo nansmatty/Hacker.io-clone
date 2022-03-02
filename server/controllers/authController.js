@@ -2,7 +2,10 @@ const AWS = require('aws-sdk');
 const jwt = require('jsonwebtoken');
 const { nanoid } = require('nanoid');
 const User = require('../models/UserModel');
-const { registerEmailParams } = require('../utils/sendEmail');
+const {
+	registerEmailParams,
+	forgotPasswordEmailParams,
+} = require('../utils/sendEmail');
 
 AWS.config.update({
 	region: process.env.AWS_REGION,
@@ -38,13 +41,11 @@ exports.register = (req, res) => {
 
 		sendEmailOnRegister
 			.then((data) => {
-				console.log('Email submitted to SES', data);
 				res.json({
 					message: `Email has been sent to ${email}, Follow the instruction to complete your registration`,
 				});
 			})
 			.catch((err) => {
-				console.log('SES email on register', err);
 				res.json({
 					message: `We could not verify your email. Please try again after sometime.`,
 				});
@@ -118,4 +119,57 @@ exports.login = (req, res) => {
 			user: { _id, name, email, role },
 		});
 	});
+};
+
+exports.forgotPassword = (req, res) => {
+	const { email } = req.body;
+	User.findOne({ email }).exec((err, user) => {
+		if (err || !user) {
+			return res.status(400).json({
+				error: 'User does not exists!',
+			});
+		}
+
+		//generate token
+
+		const token = jwt.sign(
+			{ name: user.name },
+			process.env.JWT_RESET_PASSWORD,
+			{
+				expiresIn: '10m',
+			}
+		);
+
+		const params = forgotPasswordEmailParams(user.name, email, token);
+
+		return user.updateOne({ resetPasswordLink: token }, (err, success) => {
+			if (err) {
+				return res.status(400).json({
+					error: 'Password reset failed. Try Later!',
+				});
+			}
+
+			const sendEmailResetPassword = new AWS.SES({ apiVersion: '2010-12-01' })
+				.sendEmail(params)
+				.promise();
+
+			sendEmailResetPassword
+				.then((data) => {
+					console.log('SES reset password success', data);
+					res.json({
+						message: `Email has been sent to ${email}, Follow the instruction to reset your password`,
+					});
+				})
+				.catch((err) => {
+					console.log('SES reset password failed', err);
+					res.json({
+						message: `We could not verify your email. Please try again after sometime.`,
+					});
+				});
+		});
+	});
+};
+
+exports.resetPassword = (req, res) => {
+	//
 };

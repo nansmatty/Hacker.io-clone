@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 // import Head from 'next/head';
 import Link from 'next/link';
 import NProgress from 'nprogress';
@@ -74,7 +74,7 @@ const Layout = ({ children }) => {
 						<a
 							className='nav-link text-white fw-bold'
 							style={{ letterSpacing: '1px' }}>
-							{isAuthenticated().name}
+							{`Welcome ${isAuthenticated().name}`}
 						</a>
 					</Link>
 				</li>
@@ -86,7 +86,7 @@ const Layout = ({ children }) => {
 						<a
 							className='nav-link text-white fw-bold'
 							style={{ letterSpacing: '1px' }}>
-							{isAuthenticated().name}
+							{`Welcome ${isAuthenticated().name}`}
 						</a>
 					</Link>
 				</li>
