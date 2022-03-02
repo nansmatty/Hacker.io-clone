@@ -1,27 +1,41 @@
-import { useState, useEffect } from 'react';
-import Layout from '../../components/Layout';
-import Router from 'next/router';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { showErrorMessage, showSuccessMessage } from '../../helpers/alert';
-import { API } from '../../config';
-import { isAuthenticated } from '../../helpers/auth';
-const ForgotPassword = () => {
+import Router, { withRouter } from 'next/router';
+import jwt from 'jsonwebtoken';
+import Layout from '../../../../components/Layout';
+import { API } from '../../../../config';
+import {
+	showErrorMessage,
+	showSuccessMessage,
+} from '../../../../helpers/alert';
+import { isAuthenticated } from '../../../../helpers/auth';
+
+const ResetPassword = ({ router }) => {
 	const [state, setState] = useState({
-		email: '',
+		name: '',
+		resetPasswordLink: '',
+		newPassword: '',
 		success: '',
 		error: '',
 	});
 
-	const { email, success, error } = state;
+	const { name, resetPasswordLink, newPassword, success, error } = state;
 
 	useEffect(() => {
+		let token = router.query.resetPasswordLink;
+
+		if (token) {
+			const { name } = jwt.decode(token);
+			setState({ ...state, name, resetPasswordLink: token });
+		}
+
 		isAuthenticated() && Router.push('/');
-	}, []);
+	}, [router]);
 
 	const handleChange = (e) => {
 		setState({
 			...state,
-			email: e.target.value,
+			newPassword: e.target.value,
 			success: '',
 			error: '',
 		});
@@ -30,12 +44,13 @@ const ForgotPassword = () => {
 	const submitHandler = async (e) => {
 		e.preventDefault();
 		try {
-			const response = await axios.put(`${API}/password/forgot`, {
-				email,
+			const response = await axios.put(`${API}/reset-password`, {
+				resetPasswordLink,
+				newPassword,
 			});
 			setState({
 				...state,
-				email: '',
+				newPassword: '',
 				success: response.data.message,
 			});
 		} catch (error) {
@@ -43,17 +58,16 @@ const ForgotPassword = () => {
 		}
 	};
 
-	const forgotPasswordForm = () => (
+	const resetPasswordForm = () => (
 		<form onSubmit={submitHandler}>
 			<div className='form-group'>
 				<div className='mb-3'>
-					<label className='form-label fw-bold'>Email</label>
+					<label className='form-label fw-bold'>New password</label>
 					<input
-						type='email'
+						type='password'
 						className='form-control'
-						placeholder='Email Address'
 						onChange={handleChange}
-						value={email}
+						value={newPassword}
 						autoComplete='true'
 						required
 					/>
@@ -66,20 +80,19 @@ const ForgotPassword = () => {
 			</div>
 		</form>
 	);
-
 	return (
 		<Layout>
 			<div className='col-md-6 offset-md-3 shadow p-3 rounded'>
 				<h3 style={{ letterSpacing: '1px', fontWeight: '600' }}>
-					Forgot Password
+					Hi {name}, Ready to reset your password
 				</h3>
 				<br />
 				{success && showSuccessMessage(success)}
 				{error && showErrorMessage(error)}
-				{forgotPasswordForm()}
+				{resetPasswordForm()}
 			</div>
 		</Layout>
 	);
 };
 
-export default ForgotPassword;
+export default withRouter(ResetPassword);

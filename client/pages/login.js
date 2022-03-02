@@ -80,7 +80,7 @@ const Login = () => {
 				</div>
 			</div>
 			<div className='form-group'>
-				<Link href='/password/forgot'>
+				<Link href='/auth/password/forgot'>
 					<a className='text-dark fw-bold'>Forgot Password</a>
 				</Link>
 			</div>
