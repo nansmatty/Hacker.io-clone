@@ -1,0 +1,3 @@
+exports.createCategory = (req, res) => {
+	//
+};
