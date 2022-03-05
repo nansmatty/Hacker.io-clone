@@ -59,7 +59,9 @@ exports.createCategory = (req, res) => {
 					console.log(err);
 					res.status(400).json({ error: 'Duplicate category' });
 				}
-				return res.json(success);
+				return res.json({
+					message: 'Category created successfully',
+				});
 			});
 		});
 	});
