@@ -79,7 +79,7 @@ const Create = ({ token, user }) => {
 
 			<div className='form-group'>
 				<div className='mb-3'>
-					<label className='form-label fw-bold'>Content</label>
+					<label className='form-label fw-bold'>Description</label>
 					<textarea
 						value={content}
 						rows='6'
@@ -93,7 +93,7 @@ const Create = ({ token, user }) => {
 
 			<div className='form-group'>
 				<div className='mb-3'>
-					<label className='btn btn-outline-info fw-bold'>
+					<label className='btn btn-outline-primary fw-bold'>
 						{imageUploadText}
 						<input
 							type='file'

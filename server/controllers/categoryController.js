@@ -12,63 +12,59 @@ const s3 = new AWS.S3({
 });
 
 exports.createCategory = (req, res) => {
-	let form = new formidable.IncomingForm();
-	form.parse(req, (err, fields, files) => {
+	const { name, content, image } = req.body;
+	const slug = slugify(name);
+
+	const base64data = new Buffer.from(
+		image.replace(/^data:image\/\w+;base64,/, ''),
+		'base64'
+	);
+	const type = image.split(';')[0].split('/')[1];
+
+	const category = new Category({ name, slug, content });
+	category.postedBy = req.user._id;
+
+	const params = {
+		Bucket: 'hackerioclone',
+		Key: `category/${uuidv4()}.${type}`,
+		Body: base64data,
+		ACL: 'public-read',
+		ContentEncoding: 'base64',
+		ContentType: `image/${type}`,
+	};
+
+	s3.upload(params, (err, data) => {
 		if (err) {
-			return res.status(400).json({
-				error: 'Image upload failed',
-			});
+			console.log(err);
+			res.status(400).json({ error: 'Upload to s3 failed' });
 		}
+		console.log('AWS UPLOAD RES DATA', data);
+		category.image.url = data.Location;
+		category.image.key = data.Key;
 
-		const { name, content } = fields;
-		const { image } = files;
-		const slug = slugify(name);
-		const category = new Category({ name, slug, content });
-		category.postedBy = req.user._id;
-
-		// Restrict the imga upload size
-
-		// if (image.size > 300000) {
-		// 	res.status(400).json({
-		// 		error: 'Image Size should less then 2mb',
-		// 	});
-		// }
-
-		// upload Image on  aws S3
-
-		const params = {
-			Bucket: 'hackerioclone',
-			Key: `category/${uuidv4()}`,
-			Body: fs.readFileSync(image.filepath),
-			ACL: 'public-read',
-			ContentType: `image/jpg`,
-		};
-
-		s3.upload(params, (err, data) => {
+		// save to db
+		category.save((err, success) => {
 			if (err) {
 				console.log(err);
-				res.status(400).json({ error: 'Upload to s3 failed' });
+				res.status(400).json({ error: 'Duplicate category' });
 			}
-			console.log('AWS UPLOAD RES DATA', data);
-			category.image.url = data.Location;
-			category.image.key = data.Key;
-
-			// save to db
-			category.save((err, success) => {
-				if (err) {
-					console.log(err);
-					res.status(400).json({ error: 'Duplicate category' });
-				}
-				return res.json({
-					message: 'Category created successfully',
-				});
+			return res.json({
+				message: 'Category created successfully',
 			});
 		});
 	});
 };
 
 exports.getCategories = (req, res) => {
-	//
+	Category.find({}).exec((err, data) => {
+		if (err) {
+			return res.status(400).json({
+				error: 'Categories could not load!',
+			});
+		}
+
+		res.json(data);
+	});
 };
 exports.getCategory = (req, res) => {
 	//
