@@ -14,7 +14,14 @@ const {
 	categoryUpdateValidator,
 } = require('../validators/categoryValidator');
 
-router.post('/category', requireSignin, adminMiddleware, createCategory);
+router.post(
+	'/category',
+	categoryCreateValidator,
+	runValidations,
+	requireSignin,
+	adminMiddleware,
+	createCategory
+);
 
 router.get('/categories', getCategories);
 router.get('/category/:slug', getCategory);
