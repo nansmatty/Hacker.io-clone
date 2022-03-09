@@ -120,7 +120,7 @@ const Create = ({ token, user }) => {
 
 			<div className='form-group'>
 				<div className='mb-3'>
-					<label className='form-label fw-bold'></label>
+					<label className='form-label fw-bold'>Upload Image</label>
 					<input
 						type='file'
 						className='form-control'
