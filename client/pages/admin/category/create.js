@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import Resizer from 'react-image-file-resizer';
 import Layout from '../../../components/Layout';
 import { API } from '../../../config';
 import withAdmin from '../../withAdmin';
@@ -11,36 +12,55 @@ const Create = ({ token, user }) => {
 		content: '',
 		error: '',
 		success: '',
-		formData: typeof window !== 'undefined' && new FormData(),
-		imageUploadText: 'Upload Image',
+		image: '',
 	});
 
-	const { name, success, error, formData, imageUploadText, content } = state;
+	const { name, success, error, image, content } = state;
+
+	const resizeFile = (file) =>
+		Resizer.imageFileResizer(
+			file,
+			300,
+			300,
+			'JPEG',
+			100,
+			0,
+			(uri) => {
+				setState({ ...state, image: uri, success: '', error: '' });
+			},
+			'base64'
+		);
+
+	const handleImage = async (pic) => {
+		try {
+			const file = pic;
+			await resizeFile(file);
+		} catch (err) {
+			console.log(err);
+		}
+	};
 
 	const handleChange = (name) => (e) => {
-		const value = name === 'image' ? e.target.files[0] : e.target.value;
-		const imageName =
-			name === 'image' ? e.target.files[0].name : 'Upload Image';
-
-		formData.set(name, value);
-
 		setState({
 			...state,
-			[name]: value,
+			[name]: e.target.value,
 			error: '',
 			success: '',
-			imageUploadText: imageName,
 		});
 	};
 
 	const submitHandler = async (e) => {
 		e.preventDefault();
 		try {
-			const response = await axios.post(`${API}/category`, formData, {
-				headers: {
-					Authorization: `Bearer ${token}`,
-				},
-			});
+			const response = await axios.post(
+				`${API}/category`,
+				{ name, content, image },
+				{
+					headers: {
+						Authorization: `Bearer ${token}`,
+					},
+				}
+			);
 
 			console.log('CATEGORY CREATE RESPONSE: ', response.data);
 			setState({
@@ -48,7 +68,7 @@ const Create = ({ token, user }) => {
 				name: '',
 				formData: '',
 				content: '',
-				imageUploadText: 'Upload Image',
+				image: '',
 				success: response.data.message,
 				error: '',
 			});
@@ -93,17 +113,14 @@ const Create = ({ token, user }) => {
 
 			<div className='form-group'>
 				<div className='mb-3'>
-					<label className='btn btn-outline-primary fw-bold'>
-						{imageUploadText}
-						<input
-							type='file'
-							className='form-control'
-							accept='image/*'
-							onChange={handleChange('image')}
-							required
-							hidden
-						/>
-					</label>
+					<label className='form-label fw-bold'></label>
+					<input
+						type='file'
+						className='form-control'
+						accept='image/*'
+						onChange={(e) => handleImage(e.target.files[0])}
+						required
+					/>
 				</div>
 			</div>
 
