@@ -23,15 +23,15 @@ router.post(
 	createLink
 );
 router.get('/links', getAllLinks);
-router.get('/link/:id', getLink);
+router.get('/link/:slug', getLink);
 router.put(
-	'/link/:id',
+	'/link/:slug',
 	linkUpdateValidator,
 	runValidations,
 	requireSignin,
 	authMiddleware,
 	updateLink
 );
-router.delete('/link/:id', requireSignin, authMiddleware, deleteLink);
+router.delete('/link/:slug', requireSignin, authMiddleware, deleteLink);
 
 module.exports = router;
