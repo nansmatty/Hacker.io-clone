@@ -1,21 +1,24 @@
 import { useEffect, useState } from 'react';
+import dynamic from 'next/dynamic';
 import axios from 'axios';
 import Resizer from 'react-image-file-resizer';
+const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 import Layout from '../../../components/Layout';
 import { API } from '../../../config';
 import withAdmin from '../../withAdmin';
 import { showErrorMessage, showSuccessMessage } from '../../../helpers/alert';
+import 'react-quill/dist/quill.bubble.css';
 
 const Create = ({ token, user }) => {
 	const [state, setState] = useState({
 		name: '',
-		content: '',
 		error: '',
 		success: '',
 		image: '',
 	});
+	const [content, setContent] = useState('');
 
-	const { name, success, error, image, content } = state;
+	const { name, success, error, image } = state;
 
 	const resizeFile = (file) =>
 		Resizer.imageFileResizer(
@@ -38,6 +41,11 @@ const Create = ({ token, user }) => {
 		} catch (err) {
 			console.log(err);
 		}
+	};
+
+	const handleContent = (event) => {
+		setContent(event);
+		setState({ ...state, success: '', error: '' });
 	};
 
 	const handleChange = (name) => (e) => {
@@ -67,7 +75,6 @@ const Create = ({ token, user }) => {
 				...state,
 				name: '',
 				formData: '',
-				content: '',
 				image: '',
 				success: response.data.message,
 				error: '',
@@ -100,13 +107,13 @@ const Create = ({ token, user }) => {
 			<div className='form-group'>
 				<div className='mb-3'>
 					<label className='form-label fw-bold'>Description</label>
-					<textarea
+					<ReactQuill
+						theme='bubble'
 						value={content}
-						rows='6'
-						className='form-control'
-						onChange={handleChange('content')}
-						autoComplete='true'
-						required
+						onChange={handleChange}
+						placeholder='Write Something'
+						className='pb-5 mb-3 rounded'
+						style={{ border: '1px solid #CED4DA' }}
 					/>
 				</div>
 			</div>
