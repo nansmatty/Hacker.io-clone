@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import dynamic from 'next/dynamic';
 import axios from 'axios';
 import Resizer from 'react-image-file-resizer';
@@ -9,7 +9,7 @@ import withAdmin from '../../withAdmin';
 import { showErrorMessage, showSuccessMessage } from '../../../helpers/alert';
 import 'react-quill/dist/quill.bubble.css';
 
-const Create = ({ token, user }) => {
+const Create = ({ token }) => {
 	const [state, setState] = useState({
 		name: '',
 		error: '',
@@ -110,7 +110,7 @@ const Create = ({ token, user }) => {
 					<ReactQuill
 						theme='bubble'
 						value={content}
-						onChange={handleChange}
+						onChange={handleContent}
 						placeholder='Write Something'
 						className='pb-5 mb-3 rounded'
 						style={{ border: '1px solid #CED4DA' }}

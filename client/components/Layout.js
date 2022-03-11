@@ -46,6 +46,15 @@ const Layout = ({ children }) => {
 					</a>
 				</Link>
 			</li>
+			<li className='nav-item'>
+				<Link href='/user/link/create'>
+					<a
+						className='nav-link text-white fw-bold text-decoration-underline'
+						style={{ letterSpacing: '1px' }}>
+						Submit a link
+					</a>
+				</Link>
+			</li>
 			{!isAuthenticated() && (
 				<React.Fragment>
 					<li className='nav-item ms-auto'>

@@ -4,7 +4,6 @@ import { getCookie } from '../helpers/auth';
 
 const withUser = (Page) => {
 	const WithAuthUser = (props) => <Page {...props} />;
-
 	WithAuthUser.getInitialProps = async (context) => {
 		const token = getCookie('token', context.req);
 		let user = null;
@@ -26,6 +25,7 @@ const withUser = (Page) => {
 		}
 
 		if (user === null) {
+			// redirect
 			context.res.writeHead(302, {
 				Location: '/',
 			});
@@ -41,4 +41,5 @@ const withUser = (Page) => {
 
 	return WithAuthUser;
 };
+
 export default withUser;
