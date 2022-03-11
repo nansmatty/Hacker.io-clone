@@ -74,11 +74,11 @@ const Create = ({ token }) => {
 			setState({
 				...state,
 				name: '',
-				formData: '',
 				image: '',
-				success: response.data.message,
+				success: 'Link created successfully',
 				error: '',
 			});
+			setContent('');
 		} catch (error) {
 			setState({
 				...state,

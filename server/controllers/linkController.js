@@ -7,15 +7,17 @@ exports.createLink = (req, res) => {
 	let link = new Link({ title, url, categories, type, medium, slug });
 	link.postedBy = req.user._id;
 	// categories
-	let arrayOfCategories = categories && categories.split(',');
-	link.categories = arrayOfCategories;
+	// let arrayOfCategories = categories && categories.split(',');
+	// link.categories = arrayOfCategories;
 	link.save((err, data) => {
 		if (err) {
 			res.status(400).json({
 				error: 'There is some error from our side. Please try later!',
 			});
 		}
-		res.json(data);
+		res.json({
+			message: 'Link created successfully',
+		});
 	});
 };
 

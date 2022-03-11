@@ -1,13 +1,13 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState, Fragment } from 'react';
 import axios from 'axios';
 import Router from 'next/router';
 import Layout from '../../../components/Layout';
 import { API } from '../../../config';
 import { showErrorMessage, showSuccessMessage } from '../../../helpers/alert';
 import withUser from '../../withUser';
-import { isAuthenticated } from '../../../helpers/auth';
+import { getCookie, isAuthenticated } from '../../../helpers/auth';
 
-const CreateLink = ({ token, user }) => {
+const CreateLink = ({ token }) => {
 	const [state, setState] = useState({
 		title: '',
 		url: '',
@@ -37,7 +37,6 @@ const CreateLink = ({ token, user }) => {
 
 	const loadCategories = async () => {
 		const { data } = await axios.get(`${API}/categories`);
-		console.log(data);
 		setState({ ...state, loadedCategories: data });
 	};
 
@@ -57,25 +56,136 @@ const CreateLink = ({ token, user }) => {
 			all.splice(clickedCategory, 1);
 		}
 
-		console.log(all);
 		setState({ ...state, categories: all, error: '', success: '' });
 	};
-	const handleSubmit = (e) => {
+
+	const handleTypeClick = (e) => {
+		setState({ ...state, type: e.target.value, success: '', error: '' });
+	};
+
+	const handleMediumClick = (e) => {
+		setState({ ...state, medium: e.target.value, success: '', error: '' });
+	};
+
+	const handleSubmit = async (e) => {
 		e.preventDefault();
+		try {
+			const response = await axios.post(
+				`${API}/link`,
+				{
+					title,
+					url,
+					categories,
+					type,
+					medium,
+				},
+				{
+					headers: {
+						Authorization: `Bearer ${token}`,
+					},
+				}
+			);
+
+			console.log('LINK CREATE RESPONSE: ', response.data);
+			setState({
+				...state,
+				title: '',
+				url: '',
+				categories: [],
+				loadedCategories: [],
+				type: '',
+				medium: '',
+				success: response.data.message,
+				error: '',
+			});
+		} catch (error) {
+			console.log('LINK CREATE ERROR: ', error);
+			setState({
+				...state,
+				success: '',
+				error: error.response.data.error,
+			});
+		}
 	};
 
 	const showCategories = () => {
-		return loadedCategories?.map((category) => (
-			<li className='list-unstyled' key={category._id}>
-				<input
-					type='checkbox'
-					onChange={handleToggle(category._id)}
-					className='me-2'
-				/>
-				<label className='form-check-label'>{category.name}</label>
-			</li>
-		));
+		return (
+			<Fragment>
+				{loadedCategories?.map((category) => (
+					<li className='list-unstyled' key={category._id}>
+						<input
+							type='checkbox'
+							onChange={handleToggle(category._id)}
+							className='me-2'
+						/>
+						<label className='form-check-label'>{category.name}</label>
+					</li>
+				))}
+			</Fragment>
+		);
 	};
+
+	const showTypes = () => (
+		<Fragment>
+			<div className='form-check ms-4'>
+				<label className='form-check-label'>
+					<input
+						type='radio'
+						onClick={handleTypeClick}
+						checked={type === 'free'}
+						value='free'
+						className='form-check-input'
+						name='type'
+					/>
+					Free
+				</label>
+			</div>
+			<div className='form-check ms-4'>
+				<label className='form-check-label'>
+					<input
+						type='radio'
+						onClick={handleTypeClick}
+						checked={type === 'paid'}
+						value='paid'
+						className='form-check-input'
+						name='type'
+					/>
+					Paid
+				</label>
+			</div>
+		</Fragment>
+	);
+
+	const showMedium = () => (
+		<Fragment>
+			<div className='form-check ms-4'>
+				<label className='form-check-label'>
+					<input
+						type='radio'
+						onClick={handleMediumClick}
+						checked={medium === 'book'}
+						value='book'
+						className='form-check-input'
+						name='medium'
+					/>
+					Book
+				</label>
+			</div>
+			<div className='form-check ms-4'>
+				<label className='form-check-label'>
+					<input
+						type='radio'
+						onClick={handleMediumClick}
+						checked={medium === 'video'}
+						value='video'
+						className='form-check-input'
+						name='medium'
+					/>
+					Video
+				</label>
+			</div>
+		</Fragment>
+	);
 
 	const submitLinkForm = () => (
 		<form onSubmit={handleSubmit}>
@@ -99,8 +209,11 @@ const CreateLink = ({ token, user }) => {
 			</div>
 			<div className='form-group'>
 				<div className='mb-3'>
-					<button className='btn btn-outline-primary fw-bold' type='submit'>
-						Submit
+					<button
+						disabled={!isAuthenticated || !token}
+						className='btn btn-outline-primary fw-bold'
+						type='submit'>
+						{isAuthenticated || token ? 'Submit' : 'Login to submit'}
 					</button>
 				</div>
 			</div>
@@ -120,18 +233,32 @@ const CreateLink = ({ token, user }) => {
 				</div>
 			</div>
 			<div className='row'>
-				<div className='col-md-4'>
+				<div className='col-md-3'>
 					<div className='form-group'>
 						<label className='fw-bold mb-2'>Category</label>
 						<ul style={{ maxHeight: '150px', overflowY: 'scroll' }}>
 							{showCategories()}
 						</ul>
 					</div>
+					<div className='form-group'>
+						<label className='fw-bold mb-2'>Type</label>
+						{showTypes()}
+					</div>
+					<div className='form-group'>
+						<label className='fw-bold mb-2'>Medium</label>
+						{showMedium()}
+					</div>
 				</div>
-				<div className='col-md-8'>{submitLinkForm()}</div>
+				<div className='col-md-9'>{submitLinkForm()}</div>
+				{/* {JSON.stringify(medium)} */}
 			</div>
 		</Layout>
 	);
+};
+
+CreateLink.getInitialProps = ({ req }) => {
+	const token = getCookie('token', req);
+	return { token };
 };
 
 export default CreateLink;
