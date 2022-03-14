@@ -1,4 +1,5 @@
 const Category = require('../models/CategoryModel');
+const Link = require('../models/LinkModel');
 const slugify = require('slugify');
 const AWS = require('aws-sdk');
 const { v4: uuidv4 } = require('uuid');
@@ -65,7 +66,36 @@ exports.getCategories = (req, res) => {
 	});
 };
 exports.getCategory = (req, res) => {
-	//
+	const { slug } = req.params;
+
+	let limitLoad = req.body.limit ? parseInt(req.body.limit) : 10;
+	let skipLoad = req.body.skip ? parseInt(req.body.skip) : 0;
+
+	Category.findOne({ slug })
+		.populate('postedBy', '_id name username')
+		.exec((err, category) => {
+			if (err) {
+				return res.status(400).json({
+					error: 'Categories could not exist!',
+				});
+			}
+
+			Link.find({ categories: category })
+				.populate('postedBy', '_id name, username')
+				.populate('categories', 'name')
+				.sort({ createdAt: -1 })
+				.limit(limitLoad)
+				.skip(skipLoad)
+				.exec((err, link) => {
+					if (err) {
+						return res.status(400).json({
+							error: 'There is no links associated with this category!',
+						});
+					}
+
+					res.json({ category, link });
+				});
+		});
 };
 exports.updateCategory = (req, res) => {
 	//
