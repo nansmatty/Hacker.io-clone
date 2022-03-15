@@ -24,7 +24,7 @@ router.post(
 );
 
 router.get('/categories', getCategories);
-router.get('/category/:slug', getCategory);
+router.post('/category/:slug', getCategory);
 router.put(
 	'/category/:slug',
 	categoryUpdateValidator,

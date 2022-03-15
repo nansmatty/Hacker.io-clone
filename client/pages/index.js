@@ -6,7 +6,7 @@ import { API } from '../config';
 const Home = ({ categories }) => {
 	const listCategories = () =>
 		categories.map((category, index) => (
-			<Link href='/' key={index}>
+			<Link href={`/links/${category.slug}`} key={index}>
 				<a className='bg-light p-2 col-md-4 border border-dark text-decoration-none text-dark rounded '>
 					<div className='row'>
 						<div className='col-md-4'>

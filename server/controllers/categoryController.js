@@ -81,7 +81,7 @@ exports.getCategory = (req, res) => {
 			}
 
 			Link.find({ categories: category })
-				.populate('postedBy', '_id name, username')
+				.populate('postedBy', '_id name username')
 				.populate('categories', 'name')
 				.sort({ createdAt: -1 })
 				.limit(limitLoad)
