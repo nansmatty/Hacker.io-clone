@@ -1,11 +1,11 @@
 import React, { useState, Fragment } from 'react';
 import moment from 'moment';
+import InfiniteScroll from 'react-infinite-scroller';
 import Link from 'next/link';
 import axios from 'axios';
 import Layout from '../../components/Layout';
 import { API } from '../../config';
 import parse from 'html-react-parser';
-import { set } from 'nprogress';
 
 const CategoryBasedLinks = ({
 	query,
@@ -19,6 +19,14 @@ const CategoryBasedLinks = ({
 	const [limit, setLimit] = useState(linksLimit);
 	const [skip, setSkip] = useState(0);
 	const [size, setSize] = useState(totalLinks);
+
+	const itemsHasMore = () => {
+		if (size > 0 && size >= limit) {
+			return true;
+		} else {
+			return false;
+		}
+	};
 
 	const handleClick = async (linkId) => {
 		await axios.put(`${API}/click-count`, { linkId });
@@ -95,22 +103,9 @@ const CategoryBasedLinks = ({
 			skip: toSkip,
 			limit,
 		});
-		console.log('All Links', allLinks);
 		setAllLinks([...allLinks, ...data.link]);
-		console.log('Links length', data.link.length);
 		setSize(data.link.length);
 		setSkip(toSkip);
-	};
-
-	const loadMoreButton = () => {
-		return (
-			size > 0 &&
-			size >= limit && (
-				<button onClick={loadMore} className='btn btn-outline-primary btn-lg'>
-					Load More
-				</button>
-			)
-		);
 	};
 
 	return (
@@ -137,13 +132,30 @@ const CategoryBasedLinks = ({
 				<div className='col-md-8'>
 					<h3 className='fw-bold'>Links</h3>
 					<br />
-					{listOfLinks()}
+					<InfiniteScroll
+						pageStart={0}
+						loadMore={loadMore}
+						hasMore={itemsHasMore()}
+						loader={<img src='/static/images/loading.gif' alt='loading' />}>
+						{listOfLinks()}
+					</InfiniteScroll>
 				</div>
 				<div className='col-md-4 d-flex justify-content-center'>
 					<h3 className='fw-bold'>Most Popular Links of {category.name}</h3>
 				</div>
-				<div className='text-center pb-5 pt-4'>{loadMoreButton()}</div>
 			</div>
+
+			{/* <div className='row'>
+				<div className='col-md-12 text-center'>
+					<InfiniteScroll
+						pageStart={0}
+						loadMore={loadMore}
+						hasMore={itemsHasMore()}
+						loader={
+							<img src='/static/images/loading.gif' alt='loading' />
+						}></InfiniteScroll>
+				</div>
+			</div> */}
 		</Layout>
 	);
 };
@@ -157,7 +169,7 @@ CategoryBasedLinks.getInitialProps = async ({ query, req }) => {
 		limit,
 	});
 
-	console.log('Link', data?.link);
+	// console.log('Link', data?.link);
 
 	return {
 		query,
