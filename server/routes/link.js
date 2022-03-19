@@ -5,6 +5,7 @@ const {
 	getLink,
 	updateLink,
 	deleteLink,
+	clickCount,
 } = require('../controllers/linkController');
 const { requireSignin, authMiddleware } = require('../utils/middleware');
 const { runValidations } = require('../validators');
@@ -23,6 +24,7 @@ router.post(
 	createLink
 );
 router.get('/links', getAllLinks);
+router.put('/click-count', clickCount);
 router.get('/link/:slug', getLink);
 router.put(
 	'/link/:slug',
