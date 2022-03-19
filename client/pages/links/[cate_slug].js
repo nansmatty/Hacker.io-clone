@@ -5,6 +5,7 @@ import axios from 'axios';
 import Layout from '../../components/Layout';
 import { API } from '../../config';
 import parse from 'html-react-parser';
+import { set } from 'nprogress';
 
 const CategoryBasedLinks = ({
 	query,
@@ -15,6 +16,9 @@ const CategoryBasedLinks = ({
 	linksSkip,
 }) => {
 	const [allLinks, setAllLinks] = useState(links);
+	const [limit, setLimit] = useState(linksLimit);
+	const [skip, setSkip] = useState(0);
+	const [size, setSize] = useState(totalLinks);
 
 	const listOfLinks = () => (
 		<Fragment>
@@ -68,6 +72,30 @@ const CategoryBasedLinks = ({
 		</Fragment>
 	);
 
+	const loadMore = async () => {
+		let toSkip = skip + limit;
+		const { data } = await axios.post(`${API}/category/${query.cate_slug}`, {
+			skip: toSkip,
+			limit,
+		});
+		console.log('All Links', allLinks);
+		setAllLinks([...allLinks, ...data.link]);
+		console.log('Links length', data.link.length);
+		setSize(data.link.length);
+		setSkip(toSkip);
+	};
+
+	const loadMoreButton = () => {
+		return (
+			size > 0 &&
+			size >= limit && (
+				<button onClick={loadMore} className='btn btn-outline-primary btn-lg'>
+					Load More
+				</button>
+			)
+		);
+	};
+
 	return (
 		<Layout>
 			<div className='row'>
@@ -97,6 +125,7 @@ const CategoryBasedLinks = ({
 				<div className='col-md-4 d-flex justify-content-center'>
 					<h3 className='fw-bold'>Most Popular Links of {category.name}</h3>
 				</div>
+				<div className='text-center pb-5 pt-4'>{loadMoreButton()}</div>
 			</div>
 		</Layout>
 	);
@@ -104,14 +133,14 @@ const CategoryBasedLinks = ({
 
 CategoryBasedLinks.getInitialProps = async ({ query, req }) => {
 	let skip = 0,
-		limit = 5;
+		limit = 1;
 
 	const { data } = await axios.post(`${API}/category/${query.cate_slug}`, {
 		skip,
 		limit,
 	});
 
-	console.log(data?.link);
+	console.log('Link', data?.link);
 
 	return {
 		query,
