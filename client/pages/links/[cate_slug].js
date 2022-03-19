@@ -20,12 +20,22 @@ const CategoryBasedLinks = ({
 	const [skip, setSkip] = useState(0);
 	const [size, setSize] = useState(totalLinks);
 
+	const handleClick = async (linkId) => {
+		await axios.put(`${API}/click-count`, { linkId });
+		loadUpdatedLinks();
+	};
+
+	const loadUpdatedLinks = async () => {
+		const { data } = await axios.post(`${API}/category/${query.cate_slug}`);
+		setAllLinks(data.link);
+	};
+
 	const listOfLinks = () => (
 		<Fragment>
 			{allLinks?.map((link, index) => (
 				<div className='alert alert-primary' key={index}>
 					<div className='row'>
-						<div className='col-md-8'>
+						<div className='col-md-8' onClick={(e) => handleClick(link._id)}>
 							<a
 								href={link.url}
 								target='_blank'
@@ -52,7 +62,9 @@ const CategoryBasedLinks = ({
 									{cate.name}
 								</span>
 							))}
+
 							<br />
+
 							<div className='pt-2'>
 								<span
 									className='text-dark fw-bold text-uppercase me-2'
@@ -63,6 +75,11 @@ const CategoryBasedLinks = ({
 									className='text-dark fw-bold text-uppercase me-2'
 									style={{ fontSize: '13px' }}>
 									{link.medium}
+								</span>
+								<span
+									className='text-dark fw-bold text-uppercase me-2 text-end float-end'
+									style={{ fontSize: '13px' }}>
+									{link.clicks}-Clicks
 								</span>
 							</div>
 						</div>
