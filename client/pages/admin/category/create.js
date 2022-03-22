@@ -12,13 +12,13 @@ import 'react-quill/dist/quill.bubble.css';
 const Create = ({ token }) => {
 	const [state, setState] = useState({
 		name: '',
+		image: '',
 		error: '',
 		success: '',
-		image: '',
 	});
 	const [content, setContent] = useState('');
 
-	const { name, success, error, image } = state;
+	const { name, image, success, error } = state;
 
 	const resizeFile = (file) =>
 		Resizer.imageFileResizer(
@@ -60,7 +60,7 @@ const Create = ({ token }) => {
 	const submitHandler = async (e) => {
 		e.preventDefault();
 		try {
-			const response = await axios.post(
+			await axios.post(
 				`${API}/category`,
 				{ name, content, image },
 				{
@@ -69,12 +69,10 @@ const Create = ({ token }) => {
 					},
 				}
 			);
-
-			console.log('CATEGORY CREATE RESPONSE: ', response.data);
 			setState({
 				...state,
-				name: '',
 				image: '',
+				name: '',
 				success: 'Link created successfully',
 				error: '',
 			});
@@ -89,7 +87,7 @@ const Create = ({ token }) => {
 	};
 
 	const createCategoryForm = () => (
-		<form onSubmit={submitHandler} encType=''>
+		<form onSubmit={submitHandler}>
 			<div className='form-group'>
 				<div className='mb-3'>
 					<label className='form-label fw-bold'>Category Name</label>

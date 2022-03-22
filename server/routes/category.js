@@ -33,11 +33,6 @@ router.put(
 	adminMiddleware,
 	updateCategory
 );
-router.delete(
-	'/category/:slug',
-	requireSignin,
-	adminMiddleware,
-	deleteCategory
-);
+router.delete('/category/:id', requireSignin, adminMiddleware, deleteCategory);
 
 module.exports = router;

@@ -4,7 +4,6 @@ import Router from 'next/router';
 import Layout from '../../../components/Layout';
 import { API } from '../../../config';
 import { showErrorMessage, showSuccessMessage } from '../../../helpers/alert';
-import withUser from '../../withUser';
 import { getCookie, isAuthenticated } from '../../../helpers/auth';
 
 const CreateLink = ({ token }) => {
@@ -213,7 +212,7 @@ const CreateLink = ({ token }) => {
 						disabled={!isAuthenticated || !token}
 						className='btn btn-outline-primary fw-bold'
 						type='submit'>
-						{isAuthenticated || token ? 'Submit' : 'Login to submit'}
+						Submit
 					</button>
 				</div>
 			</div>
@@ -228,6 +227,12 @@ const CreateLink = ({ token }) => {
 						Submit Link / URL
 					</h3>
 					<br />
+					{!isAuthenticated ||
+						(!token && (
+							<div className='alert alert-warning fw-bold'>
+								You need to login first to submit a link!
+							</div>
+						))}
 					{error && showErrorMessage}
 					{success && showSuccessMessage}
 				</div>

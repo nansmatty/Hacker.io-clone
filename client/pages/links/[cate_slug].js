@@ -146,18 +146,6 @@ const CategoryBasedLinks = ({
 					<h3 className='fw-bold'>Most Popular Links of {category.name}</h3>
 				</div>
 			</div>
-
-			{/* <div className='row'>
-				<div className='col-md-12 text-center'>
-					<InfiniteScroll
-						pageStart={0}
-						loadMore={loadMore}
-						hasMore={itemsHasMore()}
-						loader={
-							<img src='/static/images/loading.gif' alt='loading' />
-						}></InfiniteScroll>
-				</div>
-			</div> */}
 		</Layout>
 	);
 };

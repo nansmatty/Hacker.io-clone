@@ -160,10 +160,12 @@ exports.updateCategory = (req, res) => {
 	);
 };
 exports.deleteCategory = (req, res) => {
-	const { _id } = req.body;
-	Category.findOneAndRemove({ _id }).exec((err, category) => {
+	const { id } = req.params;
+	Category.findOneAndRemove({ _id: id }).exec((err, category) => {
 		if (err) {
-			return res.status(400).json({ error: "Couldn't delete the category" });
+			return res
+				.status(400)
+				.json({ error: "Couldn't find or delete the category" });
 		}
 
 		const deleteParams = {
