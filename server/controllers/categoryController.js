@@ -98,8 +98,86 @@ exports.getCategory = (req, res) => {
 		});
 };
 exports.updateCategory = (req, res) => {
-	//
+	const { slug } = req.params;
+
+	const { name, image, content } = req.body;
+
+	Category.findOneAndUpdate({ slug }, { name, content }, { new: true }).exec(
+		(err, updatedCategory) => {
+			if (err) {
+				return res.status(400).json({
+					error: 'Updating Category failed.',
+				});
+			}
+
+			if (image) {
+				//remove the existing image from s3 before uploading updated one
+				const deleteParams = {
+					Bucket: 'hackerioclone',
+					Key: `category/${updatedCategory.image.key}`,
+				};
+
+				s3.deleteObject(deleteParams, function (err, data) {
+					if (err) console.log('S3 image delete error', err);
+					else console.log('S3 image deleted during update', data);
+				});
+
+				// handle upload image
+
+				const params = {
+					Bucket: 'hackerioclone',
+					Key: `category/${uuidv4()}.${type}`,
+					Body: base64data,
+					ACL: 'public-read',
+					ContentEncoding: 'base64',
+					ContentType: `image/${type}`,
+				};
+
+				s3.upload(params, (err, data) => {
+					if (err) {
+						console.log(err);
+						res.status(400).json({ error: 'Upload to s3 failed' });
+					}
+					console.log('AWS UPLOAD RES DATA', data);
+					updatedCategory.image.url = data.Location;
+					updatedCategory.image.key = data.Key;
+
+					// save to db
+					updatedCategory.save((err, success) => {
+						if (err) {
+							console.log(err);
+							res.status(400).json({ error: 'Duplicate category' });
+						}
+						return res.json({
+							message: 'Category updated successfully',
+						});
+					});
+				});
+			} else {
+				res.json(updatedCategory);
+			}
+		}
+	);
 };
 exports.deleteCategory = (req, res) => {
-	//
+	const { _id } = req.body;
+	Category.findOneAndRemove({ _id }).exec((err, category) => {
+		if (err) {
+			return res.status(400).json({ error: "Couldn't delete the category" });
+		}
+
+		const deleteParams = {
+			Bucket: 'hackerioclone',
+			Key: `category/${category.image.key}`,
+		};
+
+		s3.deleteObject(deleteParams, function (err, data) {
+			if (err) console.log('S3 image delete error', err);
+			else console.log('S3 image deleted during update', data);
+		});
+
+		res.json({
+			message: 'Category deleted successfully',
+		});
+	});
 };
