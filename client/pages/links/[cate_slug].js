@@ -136,7 +136,9 @@ const CategoryBasedLinks = ({
 						pageStart={0}
 						loadMore={loadMore}
 						hasMore={itemsHasMore()}
-						loader={<img src='/static/images/loading.gif' alt='loading' />}>
+						loader={
+							<img key={0} src='/static/images/loading.gif' alt='loading' />
+						}>
 						{listOfLinks()}
 					</InfiniteScroll>
 				</div>
