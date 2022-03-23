@@ -114,7 +114,7 @@ exports.updateCategory = (req, res) => {
 				//remove the existing image from s3 before uploading updated one
 				const deleteParams = {
 					Bucket: 'hackerioclone',
-					Key: `category/${updatedCategory.image.key}`,
+					Key: `${updatedCategory.image.key}`,
 				};
 
 				s3.deleteObject(deleteParams, function (err, data) {
@@ -170,7 +170,7 @@ exports.deleteCategory = (req, res) => {
 
 		const deleteParams = {
 			Bucket: 'hackerioclone',
-			Key: `category/${category.image.key}`,
+			Key: `${category.image.key}`,
 		};
 
 		s3.deleteObject(deleteParams, function (err, data) {
