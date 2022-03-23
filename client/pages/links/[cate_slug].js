@@ -152,7 +152,7 @@ const CategoryBasedLinks = ({
 
 CategoryBasedLinks.getInitialProps = async ({ query, req }) => {
 	let skip = 0,
-		limit = 1;
+		limit = 2;
 
 	const { data } = await axios.post(`${API}/category/${query.cate_slug}`, {
 		skip,
