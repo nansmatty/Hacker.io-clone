@@ -77,7 +77,7 @@ const User = ({ user, userLinks, token }) => {
 						</div>
 						<div className='col-md-12'>
 							<div className='pt-1'>
-								<Link href=''>
+								<Link href={`/user/link/${link._id}`}>
 									<a
 										className='btn btn-primary text-center fw-bold me-1'
 										style={{ letterSpacing: '1px' }}>

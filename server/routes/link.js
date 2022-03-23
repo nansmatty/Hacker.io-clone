@@ -25,7 +25,7 @@ router.post(
 );
 router.get('/links', getAllLinks);
 router.put('/click-count', clickCount);
-router.get('/link/:slug', getLink);
+router.get('/link/:id', getLink);
 router.put(
 	'/link/:id',
 	linkUpdateValidator,
