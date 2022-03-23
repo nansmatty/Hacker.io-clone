@@ -27,13 +27,13 @@ router.get('/links', getAllLinks);
 router.put('/click-count', clickCount);
 router.get('/link/:slug', getLink);
 router.put(
-	'/link/:slug',
+	'/link/:id',
 	linkUpdateValidator,
 	runValidations,
 	requireSignin,
 	authMiddleware,
 	updateLink
 );
-router.delete('/link/:slug', requireSignin, authMiddleware, deleteLink);
+router.delete('/link/:id', requireSignin, authMiddleware, deleteLink);
 
 module.exports = router;
