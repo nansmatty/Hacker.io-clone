@@ -7,9 +7,9 @@ const Home = ({ categories }) => {
 	const listCategories = () =>
 		categories.map((category, index) => (
 			<Link href={`/links/${category.slug}`} key={index}>
-				<a className='bg-light p-2 col-md-4 border border-dark text-decoration-none text-dark rounded '>
+				<a className='bg-light p-2 col-md-4 mb-3 border border-dark text-decoration-none text-dark rounded '>
 					<div className='row'>
-						<div className='col-md-4'>
+						<div className='col-md-4 col-sm-6'>
 							<img
 								src={category.image.url}
 								alt={category.name}
@@ -17,7 +17,7 @@ const Home = ({ categories }) => {
 								className='pe-3'
 							/>
 						</div>
-						<div className='col-md-8 d-flex align-items-center text-center'>
+						<div className='col-md-8 col-sm-6 d-flex align-items-center text-center'>
 							<h4 className='fw-bold text-wrap p-1'>{category.name}</h4>
 						</div>
 					</div>
