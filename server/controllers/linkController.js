@@ -19,14 +19,23 @@ exports.createLink = (req, res) => {
 };
 
 exports.getAllLinks = (req, res) => {
-	Link.find({}).exec((err, data) => {
-		if (err) {
-			return res.status(400).json({
-				error: 'Could not list link.',
-			});
-		}
-		res.json(data);
-	});
+	let limitLoad = req.body.limit ? parseInt(req.body.limit) : 10;
+	let skipLoad = req.body.skip ? parseInt(req.body.skip) : 0;
+
+	Link.find({})
+		.populate('postedBy', 'name')
+		.populate('categories', 'name slug')
+		.sort({ createdAt: -1 })
+		.skip(skipLoad)
+		.limit(limitLoad)
+		.exec((err, data) => {
+			if (err) {
+				return res.status(400).json({
+					error: 'Could not list link.',
+				});
+			}
+			res.json(data);
+		});
 };
 
 exports.clickCount = (req, res) => {
