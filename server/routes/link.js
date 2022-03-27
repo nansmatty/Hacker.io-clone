@@ -11,6 +11,7 @@ const {
 	requireSignin,
 	authMiddleware,
 	adminMiddleware,
+	sameUserMiddleware,
 } = require('../utils/middleware');
 const { runValidations } = require('../validators');
 const {
@@ -36,8 +37,24 @@ router.put(
 	runValidations,
 	requireSignin,
 	authMiddleware,
+	sameUserMiddleware,
 	updateLink
 );
-router.delete('/link/:id', requireSignin, authMiddleware, deleteLink);
+router.put(
+	'/admin/link/:id',
+	linkUpdateValidator,
+	runValidations,
+	requireSignin,
+	adminMiddleware,
+	updateLink
+);
+router.delete(
+	'/link/:id',
+	requireSignin,
+	authMiddleware,
+	sameUserMiddleware,
+	deleteLink
+);
+router.delete('/admin/link/:id', requireSignin, adminMiddleware, deleteLink);
 
 module.exports = router;

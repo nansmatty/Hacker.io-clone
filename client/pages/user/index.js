@@ -106,8 +106,8 @@ const User = ({ user, userLinks, token }) => {
 			<hr />
 			<div className='row'>
 				<div className='col-md-4'>
-					<h5 className='fw-bold text-center'>Options</h5>
-					<hr />
+					{/* <h5 className='fw-bold text-center'>Other Links</h5>
+					<hr /> */}
 					<ul className='nav flex-column text-center'>
 						<li className='nav-item'>
 							<Link href='/user/link/create'>
@@ -130,8 +130,8 @@ const User = ({ user, userLinks, token }) => {
 					</ul>
 				</div>
 				<div className='col-md-8'>
-					<h5 className='fw-bold text-center'>Your Links</h5>
-					<hr />
+					{/* <h5 className='fw-bold text-center'>Your Links</h5>
+					<hr /> */}
 					{listOfLinks()}
 				</div>
 			</div>

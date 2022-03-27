@@ -1,4 +1,5 @@
 const expressJwt = require('express-jwt');
+const Link = require('../models/LinkModel');
 const User = require('../models/UserModel');
 
 exports.requireSignin = expressJwt({
@@ -35,6 +36,28 @@ exports.adminMiddleware = (req, res, next) => {
 		}
 
 		req.profile = user;
+		next();
+	});
+};
+
+exports.sameUserMiddleware = (req, res, next) => {
+	const { id } = req.params;
+
+	Link.findOne({ _id: id }).exec((err, data) => {
+		if (err) {
+			return res.status(400).json({
+				error: 'Could not find link',
+			});
+		}
+
+		let authorizedUser =
+			data.postedBy._id.toString() === req.user._id.toString();
+
+		if (!authorizedUser) {
+			res.status(400).json({
+				error: 'You are not authorized',
+			});
+		}
 		next();
 	});
 };
