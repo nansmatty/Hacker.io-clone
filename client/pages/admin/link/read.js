@@ -15,12 +15,34 @@ const AllLinks = ({ token, links, totalLinks, linksLimit, linksSkip }) => {
 	const [skip, setSkip] = useState(0);
 	const [size, setSize] = useState(totalLinks);
 
+	const deleteLink = async (id) => {
+		let answer = window.confirm('Are you sure you want to delete?');
+		if (answer) {
+			try {
+				await axios.delete(`${API}/admin/link/${id}`, {
+					headers: {
+						Authorization: `Bearer ${token}`,
+					},
+				});
+				typeof window !== 'undefined' && window.location.reload();
+			} catch (error) {
+				console.log('Category delete ', error);
+			}
+		}
+	};
+
+	// const handleClick = async (linkId) => {
+	// 	await axios.put(`${API}/click-count`, { linkId });
+	// 	// typeof window !== 'undefined' && window.location.reload();
+	// };
+
 	const listOfLinks = () => (
 		<Fragment>
 			{allLinks?.map((link, index) => (
 				<div className='alert alert-success' key={index}>
 					<div className='row'>
-						<div className='col-md-8' onClick={(e) => handleClick(link._id)}>
+						<div className='col-md-8'>
+							{/* onClick={(e) => handleClick(link._id)} */}
 							<a
 								href={link.url}
 								target='_blank'
@@ -70,7 +92,7 @@ const AllLinks = ({ token, links, totalLinks, linksLimit, linksSkip }) => {
 						</div>
 						<div className='col-md-12'>
 							<div className='pt-1'>
-								<Link href={`/user/link/${link._id}`}>
+								<Link href={`/admin/link/${link._id}`}>
 									<a
 										className='btn btn-primary text-center fw-bold me-1'
 										style={{ letterSpacing: '1px' }}>
@@ -96,7 +118,7 @@ const AllLinks = ({ token, links, totalLinks, linksLimit, linksSkip }) => {
 		const { data } = await axios.post(
 			`${API}/links`,
 			{
-				skip,
+				skip: toSkip,
 				limit,
 			},
 			{ headers: { Authorization: `Bearer ${token}` } }
@@ -129,9 +151,11 @@ const AllLinks = ({ token, links, totalLinks, linksLimit, linksSkip }) => {
 
 AllLinks.getInitialProps = async ({ req }) => {
 	let skip = 0,
-		limit = 10;
+		limit = 2;
 
 	const token = await getCookie('token', req);
+
+	console.log('Token from getInitialProps : ', token);
 
 	const { data } = await axios.post(
 		`${API}/links`,
