@@ -4,7 +4,7 @@ import Router from 'next/router';
 import Layout from '../../../components/Layout';
 import { API } from '../../../config';
 import { showErrorMessage, showSuccessMessage } from '../../../helpers/alert';
-import { getCookie, isAuthenticated } from '../../../helpers/auth';
+import { isAuthenticated } from '../../../helpers/auth';
 import withUser from '../../withUser';
 
 const UpdateLink = ({ token, link }) => {
@@ -68,9 +68,15 @@ const UpdateLink = ({ token, link }) => {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
+		let dynamicUpdateURL;
+		if (isAuthenticated() && isAuthenticated().role === 'admin') {
+			dynamicUpdateURL = `${API}/admin/link/${link._id}`;
+		} else {
+			dynamicUpdateURL = `${API}/link/${link._id}`;
+		}
 		try {
 			const { data } = await axios.put(
-				`${API}/link/${link._id}`,
+				dynamicUpdateURL,
 				{
 					title,
 					url,

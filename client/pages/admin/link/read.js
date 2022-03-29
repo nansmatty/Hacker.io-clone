@@ -92,7 +92,7 @@ const AllLinks = ({ token, links, totalLinks, linksLimit, linksSkip }) => {
 						</div>
 						<div className='col-md-12'>
 							<div className='pt-1'>
-								<Link href={`/admin/link/${link._id}`}>
+								<Link href={`/user/link/${link._id}`}>
 									<a
 										className='btn btn-primary text-center fw-bold me-1'
 										style={{ letterSpacing: '1px' }}>
