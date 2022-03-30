@@ -29,6 +29,7 @@ router.post(
 	createLink
 );
 router.post('/links', requireSignin, adminMiddleware, getAllLinks);
+router.get('/links', getAllLinks);
 router.put('/click-count', clickCount);
 router.get('/link/:id', getLink);
 router.put(

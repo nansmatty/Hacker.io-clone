@@ -24,24 +24,31 @@ const AllLinks = ({ token, links, totalLinks, linksLimit, linksSkip }) => {
 						Authorization: `Bearer ${token}`,
 					},
 				});
-				typeof window !== 'undefined' && window.location.reload();
+				// typeof window !== 'undefined' && window.location.reload();
+				loadUpdatedLinks();
 			} catch (error) {
 				console.log('Category delete ', error);
 			}
 		}
 	};
 
-	// const handleClick = async (linkId) => {
-	// 	await axios.put(`${API}/click-count`, { linkId });
-	// 	// typeof window !== 'undefined' && window.location.reload();
-	// };
+	const handleClick = async (linkId) => {
+		await axios.put(`${API}/click-count`, { linkId });
+		// typeof window !== 'undefined' && window.location.reload();
+		loadUpdatedLinks();
+	};
+
+	const loadUpdatedLinks = async () => {
+		const { data } = await axios.get(`${API}/links`);
+		setAllLinks(data);
+	};
 
 	const listOfLinks = () => (
 		<Fragment>
 			{allLinks?.map((link, index) => (
 				<div className='alert alert-success' key={index}>
 					<div className='row'>
-						<div className='col-md-8'>
+						<div className='col-md-8' onClick={(e) => handleClick(link._id)}>
 							{/* onClick={(e) => handleClick(link._id)} */}
 							<a
 								href={link.url}
@@ -151,7 +158,7 @@ const AllLinks = ({ token, links, totalLinks, linksLimit, linksSkip }) => {
 
 AllLinks.getInitialProps = async ({ req }) => {
 	let skip = 0,
-		limit = 2;
+		limit = 4;
 
 	const token = await getCookie('token', req);
 
