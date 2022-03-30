@@ -36,6 +36,14 @@ const userSchema = mongoose.Schema(
 			required: [true, 'Please add a password'],
 		},
 
+		categories: [
+			{
+				type: mongoose.Schema.Types.ObjectId,
+				ref: 'Category',
+				required: true,
+			},
+		],
+
 		salt: String,
 		role: {
 			type: String,

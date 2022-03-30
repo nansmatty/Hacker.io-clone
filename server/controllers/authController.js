@@ -15,7 +15,7 @@ AWS.config.update({
 });
 
 exports.register = (req, res) => {
-	const { name, email, password } = req.body;
+	const { name, email, password, categories } = req.body;
 
 	User.findOne({ email }).exec((err, user) => {
 		if (user) {
@@ -27,7 +27,7 @@ exports.register = (req, res) => {
 		// generate jwt with user name email and password
 
 		const token = jwt.sign(
-			{ name, email, password },
+			{ name, email, password, categories },
 			process.env.JWT_ACCOUNT_ACTIVATION,
 			{
 				expiresIn: '10m',
@@ -65,7 +65,7 @@ exports.registerActivate = (req, res) => {
 				return res.status(401).json({ error: 'Expired Link. Try Again' });
 			}
 
-			const { name, email, password } = jwt.decode(tokenId);
+			const { name, email, password, categories } = jwt.decode(tokenId);
 			const username = nanoid(9);
 
 			User.findOne({ email }).exec((err, user) => {
@@ -76,7 +76,13 @@ exports.registerActivate = (req, res) => {
 				}
 
 				//register or save new user
-				const newUser = new User({ username, name, email, password });
+				const newUser = new User({
+					username,
+					name,
+					email,
+					password,
+					categories,
+				});
 				newUser.save((err, user) => {
 					if (err) {
 						return res.status(400).json({

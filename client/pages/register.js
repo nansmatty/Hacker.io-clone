@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Fragment } from 'react';
 import Layout from '../components/Layout';
 import Router from 'next/router';
 import axios from 'axios';
@@ -13,13 +13,59 @@ const Register = () => {
 		password: '',
 		error: '',
 		success: '',
+		loadedCategories: [],
+		categories: [],
 	});
 
-	const { name, email, password, error, success } = stateValues;
+	const {
+		name,
+		email,
+		password,
+		error,
+		success,
+		loadedCategories,
+		categories,
+	} = stateValues;
 
 	useEffect(() => {
 		isAuthenticated() && Router.push('/');
+		loadCategories();
 	}, []);
+
+	const loadCategories = async () => {
+		const { data } = await axios.get(`${API}/categories`);
+		setStateValues({ ...stateValues, loadedCategories: data });
+	};
+
+	const handleToggle = (cid) => () => {
+		const clickedCategory = categories.indexOf(cid);
+		const all = [...categories];
+
+		if (clickedCategory === -1) {
+			all.push(cid);
+		} else {
+			all.splice(clickedCategory, 1);
+		}
+
+		setStateValues({ ...stateValues, categories: all, error: '', success: '' });
+	};
+
+	const showCategories = () => {
+		return (
+			<Fragment>
+				{loadedCategories?.map((category) => (
+					<li className='list-unstyled' key={category._id}>
+						<input
+							type='checkbox'
+							onChange={handleToggle(category._id)}
+							className='me-2'
+						/>
+						<label className='form-check-label'>{category.name}</label>
+					</li>
+				))}
+			</Fragment>
+		);
+	};
 
 	const handleChange = (name) => (e) => {
 		setStateValues({
@@ -37,6 +83,7 @@ const Register = () => {
 				name,
 				email,
 				password,
+				categories,
 			});
 
 			setStateValues({
@@ -44,6 +91,8 @@ const Register = () => {
 				name: '',
 				email: '',
 				password: '',
+				categories: [],
+				loadedCategories: [],
 				success: response.data.message,
 			});
 		} catch (error) {
@@ -86,6 +135,16 @@ const Register = () => {
 						onChange={handleChange('password')}
 						autoComplete='true'
 					/>
+				</div>
+			</div>
+			<div className='form-group'>
+				<div className='mb-3'>
+					<label className='fw-bold mb-2'>Category</label>
+					<br />
+					<span>Please check those categories you're intrested</span>
+					<ul style={{ maxHeight: '150px', overflowY: 'scroll' }}>
+						{showCategories()}
+					</ul>
 				</div>
 			</div>
 			<div className='form-group'>

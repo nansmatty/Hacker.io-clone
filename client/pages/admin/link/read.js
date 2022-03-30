@@ -155,7 +155,7 @@ AllLinks.getInitialProps = async ({ req }) => {
 
 	const token = await getCookie('token', req);
 
-	console.log('Token from getInitialProps : ', token);
+	// console.log('Token from getInitialProps : ', token);
 
 	const { data } = await axios.post(
 		`${API}/links`,
