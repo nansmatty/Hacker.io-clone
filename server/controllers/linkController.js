@@ -1,5 +1,15 @@
-const Link = require('../models/LinkModel');
 const slugify = require('slugify');
+const AWS = require('aws-sdk');
+const Link = require('../models/LinkModel');
+const Category = require('../models/CategoryModel');
+const User = require('../models/UserModel');
+const { linkPublishedParams } = require('../utils/sendEmail');
+
+AWS.config.update({
+	region: process.env.AWS_REGION,
+	accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+	secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY_ID,
+});
 
 exports.createLink = (req, res) => {
 	const { title, url, categories, type, medium } = req.body;
@@ -14,6 +24,36 @@ exports.createLink = (req, res) => {
 		}
 		res.json({
 			message: 'Link created successfully',
+		});
+
+		// Send mail to users have categories in favourite
+		User.find({ categories: { $in: categories } }).exec((err, users) => {
+			if (err) {
+				throw new Error(err);
+				console.log('Error finding users to sendmail on link publish');
+			}
+
+			Category.find({ _id: { $in: categories } }).exec((err, result) => {
+				data.categories = result;
+
+				for (let i = 0; i < users.length; i++) {
+					const params = linkPublishedParams(users[i], data);
+					const sendEmailOnLinkCreate = new AWS.SES({
+						apiVersion: '2010-12-01',
+					})
+						.sendEmail(params)
+						.promise();
+
+					sendEmailOnLinkCreate
+						.then((success) => {
+							console.log('Email submitted to SES', success);
+							return;
+						})
+						.catch((err) => {
+							console.log(`There is an error on sending email.`, err);
+						});
+				}
+			});
 		});
 	});
 };
