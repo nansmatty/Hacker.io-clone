@@ -5,7 +5,6 @@ import Link from 'next/link';
 import axios from 'axios';
 import Layout from '../../../components/Layout';
 import { API } from '../../../config';
-import parse from 'html-react-parser';
 import withAdmin from '../../withAdmin';
 import { getCookie } from '../../../helpers/auth';
 
