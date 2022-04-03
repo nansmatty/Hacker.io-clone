@@ -86,3 +86,14 @@ export const logout = () => {
 	removeLocalStorage('user');
 	Router.push('/login');
 };
+
+export const updateUserInLocalStorage = (user, next) => {
+	if (typeof window !== 'undefined') {
+		if (localStorage.getItem('user')) {
+			let auth = JSON.parse(localStorage.getItem('user'));
+			auth = user;
+			localStorage.setItem('user', JSON.stringify(auth));
+			next();
+		}
+	}
+};
