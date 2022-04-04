@@ -1,9 +1,29 @@
+import { Fragment, useEffect, useState } from 'react';
 import axios from 'axios';
+import moment from 'moment';
 import Link from 'next/link';
 import Layout from '../components/Layout';
 import { API } from '../config';
 
 const Home = ({ categories }) => {
+	const [popularLinks, setPopularLinks] = useState([]);
+
+	useEffect(() => {
+		loadPopularLinks();
+	}, []);
+
+	const loadPopularLinks = async () => {
+		const { data } = await axios.get(`${API}/link/popular`);
+
+		setPopularLinks(data);
+		console.log(popularLinks);
+	};
+
+	const handleClick = async (linkId) => {
+		await axios.put(`${API}/click-count`, { linkId });
+		loadPopularLinks();
+	};
+
 	const listCategories = () =>
 		categories.map((category, index) => (
 			<Link href={`/links/${category.slug}`} key={index}>
@@ -25,6 +45,65 @@ const Home = ({ categories }) => {
 			</Link>
 		));
 
+	const trendingLinks = () => (
+		<Fragment>
+			{popularLinks?.map((link, index) => (
+				<div className='alert alert-primary' key={index}>
+					<div className='row'>
+						<div className='col-md-8' onClick={(e) => handleClick(link._id)}>
+							<a
+								href={link.url}
+								target='_blank'
+								className='text-decoration-none'>
+								<h5 className='pt-1 '>{link.title}</h5>
+								<h6
+									className='py-2 text-danger text-decoration-underline'
+									style={{ fontSize: '15px' }}>
+									{link.url}
+								</h6>
+							</a>
+						</div>
+						<div className='col-md-4 pt-1 d-flex justify-content-end'>
+							<span className='fw-bold'>
+								{moment(link.createdAt).fromNow()} by {link.postedBy.name}
+							</span>
+						</div>
+						<div className='col-md-12'>
+							{link?.categories?.map((cate, index) => (
+								<span
+									className='text-success fw-bold text-uppercase me-2'
+									style={{ fontSize: '13px' }}
+									key={index}>
+									{cate.name}
+								</span>
+							))}
+
+							<br />
+
+							<div className='pt-2'>
+								<span
+									className='text-dark fw-bold text-uppercase me-2'
+									style={{ fontSize: '13px' }}>
+									{link.type}
+								</span>
+								<span
+									className='text-dark fw-bold text-uppercase me-2'
+									style={{ fontSize: '13px' }}>
+									{link.medium}
+								</span>
+								<span
+									className='text-dark fw-bold text-uppercase me-2 text-end float-end'
+									style={{ fontSize: '13px' }}>
+									{link.clicks}-Clicks
+								</span>
+							</div>
+						</div>
+					</div>
+				</div>
+			))}
+		</Fragment>
+	);
+
 	return (
 		<Layout>
 			<div className='row'>
@@ -34,6 +113,13 @@ const Home = ({ categories }) => {
 				</div>
 			</div>
 			<div className='row'>{listCategories()}</div>
+			<div className='row'>
+				<div className='col-md-12'>
+					<h3 className='fw-bold mt-5'>Trending Links</h3>
+					<br />
+				</div>
+			</div>
+			<div className='row'>{trendingLinks()}</div>
 		</Layout>
 	);
 };

@@ -141,6 +141,7 @@ exports.deleteLink = (req, res) => {
 exports.popularLinks = (req, res) => {
 	Link.find()
 		.populate('postedBy', 'name')
+		.populate('categories', 'name slug')
 		.sort({ clicks: -1 })
 		.limit(3)
 		.exec((err, links) => {
@@ -164,7 +165,6 @@ exports.popularLinksBasedOnCategory = (req, res) => {
 		}
 
 		Link.find({ categories: category })
-			.populate('postedBy', 'name')
 			.sort({ clicks: -1 })
 			.limit(3)
 			.exec((err, links) => {
