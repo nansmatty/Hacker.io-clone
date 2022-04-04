@@ -1,12 +1,28 @@
 import { Fragment, useEffect, useState } from 'react';
 import axios from 'axios';
 import moment from 'moment';
+import Head from 'next/head';
 import Link from 'next/link';
 import Layout from '../components/Layout';
-import { API } from '../config';
+import { API, APP_NAME } from '../config';
 
 const Home = ({ categories }) => {
 	const [popularLinks, setPopularLinks] = useState([]);
+
+	const headSEO = () => (
+		<Head>
+			<title>{APP_NAME}</title>
+			<meta
+				name='description'
+				content='A website were you can find most popular courses links. Best site for students who want level up there skills.'
+			/>
+			<meta property='og:title' content={APP_NAME} />
+			<meta
+				property='og:description'
+				content='A website were you can find most popular courses links. Best site for students who want level up there skills.'
+			/>
+		</Head>
+	);
 
 	useEffect(() => {
 		loadPopularLinks();
@@ -105,22 +121,25 @@ const Home = ({ categories }) => {
 	);
 
 	return (
-		<Layout>
-			<div className='row'>
-				<div className='col-md-12'>
-					<h3 className='fw-bold'>Browse Tutorials / Courses</h3>
-					<br />
+		<Fragment>
+			{headSEO()}
+			<Layout>
+				<div className='row'>
+					<div className='col-md-12'>
+						<h3 className='fw-bold'>Browse Tutorials / Courses</h3>
+						<br />
+					</div>
 				</div>
-			</div>
-			<div className='row'>{listCategories()}</div>
-			<div className='row'>
-				<div className='col-md-12'>
-					<h3 className='fw-bold mt-5'>Trending Links</h3>
-					<br />
+				<div className='row'>{listCategories()}</div>
+				<div className='row'>
+					<div className='col-md-12'>
+						<h3 className='fw-bold mt-5'>Trending Links</h3>
+						<br />
+					</div>
 				</div>
-			</div>
-			<div className='row'>{trendingLinks()}</div>
-		</Layout>
+				<div className='row'>{trendingLinks()}</div>
+			</Layout>
+		</Fragment>
 	);
 };
 
