@@ -166,6 +166,7 @@ exports.popularLinksBasedOnCategory = (req, res) => {
 
 		Link.find({ categories: category })
 			.sort({ clicks: -1 })
+			.populate('categories', 'name slug')
 			.limit(3)
 			.exec((err, links) => {
 				if (err) {
