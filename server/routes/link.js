@@ -6,6 +6,8 @@ const {
 	updateLink,
 	deleteLink,
 	clickCount,
+	popularLinks,
+	popularLinksBasedOnCategory,
 } = require('../controllers/linkController');
 const {
 	requireSignin,
@@ -31,6 +33,8 @@ router.post(
 router.post('/links', requireSignin, adminMiddleware, getAllLinks);
 router.get('/links', getAllLinks);
 router.put('/click-count', clickCount);
+router.get('/link/popular', popularLinks);
+router.get('/link/popular/:slug', popularLinksBasedOnCategory);
 router.get('/link/:id', getLink);
 router.put(
 	'/link/:id',

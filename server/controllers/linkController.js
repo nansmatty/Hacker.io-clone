@@ -137,3 +137,43 @@ exports.deleteLink = (req, res) => {
 		});
 	});
 };
+
+exports.popularLinks = (req, res) => {
+	Link.find()
+		.populate('postedBy', 'name')
+		.sort({ clicks: -1 })
+		.limit(3)
+		.exec((err, links) => {
+			if (err) {
+				return res.status(400).json({
+					error: 'Links not found',
+				});
+			}
+			res.json(links);
+		});
+};
+
+exports.popularLinksBasedOnCategory = (req, res) => {
+	const { slug } = req.params;
+
+	Category.findOne({ slug }).exec((err, category) => {
+		if (err) {
+			return res.status(400).json({
+				error: "Couldn't load categories",
+			});
+		}
+
+		Link.find({ categories: category })
+			.populate('postedBy', 'name')
+			.sort({ clicks: -1 })
+			.limit(3)
+			.exec((err, links) => {
+				if (err) {
+					return res.status(400).json({
+						error: 'Links not found',
+					});
+				}
+				res.json(links);
+			});
+	});
+};
