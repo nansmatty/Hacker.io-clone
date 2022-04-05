@@ -141,7 +141,7 @@ const Register = () => {
 				<div className='mb-3'>
 					<label className='fw-bold mb-2'>Category</label>
 					<br />
-					<span>Please check those categories you're intrested</span>
+					<span>Please check those categories you are interested</span>
 					<ul style={{ maxHeight: '150px', overflowY: 'scroll' }}>
 						{showCategories()}
 					</ul>
