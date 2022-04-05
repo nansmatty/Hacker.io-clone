@@ -30,7 +30,7 @@ const ResetPassword = ({ router }) => {
 		}
 
 		isAuthenticated() && Router.push('/');
-	}, [router, state]);
+	}, [router]);
 
 	const handleChange = (e) => {
 		setState({
