@@ -15,14 +15,14 @@ const Read = ({ user, token }) => {
 
 	const { error, success, categories } = state;
 
-	useEffect(() => {
-		loadCategories();
-	}, []);
-
 	const loadCategories = async () => {
 		const { data } = await axios.get(`${API}/categories`);
 		setState({ ...state, categories: data });
 	};
+
+	useEffect(() => {
+		loadCategories();
+	}, []);
 
 	const deleteCategory = async (id) => {
 		let answer = window.confirm('Are you sure you want to delete?');

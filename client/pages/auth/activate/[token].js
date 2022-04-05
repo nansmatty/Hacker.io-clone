@@ -25,7 +25,7 @@ const ActivateAccount = ({ router }) => {
 			const { name } = jwt.decode(token);
 			setUserState({ ...userState, name, tokenId: token });
 		}
-	}, [router]);
+	}, [router, userState]);
 
 	const clickSubmit = async (e) => {
 		e.preventDefault();

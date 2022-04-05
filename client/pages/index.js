@@ -24,16 +24,16 @@ const Home = ({ categories }) => {
 		</Head>
 	);
 
-	useEffect(() => {
-		loadPopularLinks();
-	}, []);
-
 	const loadPopularLinks = async () => {
 		const { data } = await axios.get(`${API}/link/popular`);
 
 		setPopularLinks(data);
 		console.log(popularLinks);
 	};
+
+	useEffect(() => {
+		loadPopularLinks();
+	}, []);
 
 	const handleClick = async (linkId) => {
 		await axios.put(`${API}/click-count`, { linkId });
