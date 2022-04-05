@@ -84,6 +84,7 @@ const CategoryBasedLinks = ({
 							<a
 								href={link.url}
 								target='_blank'
+								rel='noreferrer'
 								className='text-decoration-none'>
 								<h5 className='pt-1'>{link.title}</h5>
 								<h6
@@ -145,6 +146,7 @@ const CategoryBasedLinks = ({
 							<a
 								href={link.url}
 								target='_blank'
+								rel='noreferrer'
 								className='text-decoration-none'>
 								<h5 className='pt-1 text-truncate'>{link.title}</h5>
 								<h6

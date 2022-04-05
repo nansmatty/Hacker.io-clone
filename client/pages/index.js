@@ -70,6 +70,7 @@ const Home = ({ categories }) => {
 							<a
 								href={link.url}
 								target='_blank'
+								rel='noreferrer'
 								className='text-decoration-none'>
 								<h5 className='pt-1 '>{link.title}</h5>
 								<h6

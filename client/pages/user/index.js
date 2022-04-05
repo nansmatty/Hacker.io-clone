@@ -33,6 +33,7 @@ const User = ({ user, userLinks, token }) => {
 							<a
 								href={link.url}
 								target='_blank'
+								rel='noreferrer'
 								className='text-decoration-none'>
 								<h5 className='pt-1 '>{link.title}</h5>
 
