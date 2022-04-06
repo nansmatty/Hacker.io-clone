@@ -55,7 +55,7 @@ const Layout = ({ children }) => {
 					</a>
 				</Link>
 			</li>
-			{!isAuthenticated() && (
+			{typeof window !== 'undefined' && !isAuthenticated() && (
 				<React.Fragment>
 					<li className='nav-item ms-auto'>
 						<Link href='/login'>
@@ -77,30 +77,34 @@ const Layout = ({ children }) => {
 					</li>
 				</React.Fragment>
 			)}
-			{isAuthenticated() && isAuthenticated().role === 'admin' && (
-				<li className='nav-item ms-auto'>
-					<Link href='/admin'>
-						<a
-							className='nav-link text-white fw-bold'
-							style={{ letterSpacing: '1px' }}>
-							{`Welcome ${isAuthenticated().name}`}
-						</a>
-					</Link>
-				</li>
-			)}
+			{typeof window !== 'undefined' &&
+				isAuthenticated() &&
+				isAuthenticated().role === 'admin' && (
+					<li className='nav-item ms-auto'>
+						<Link href='/admin'>
+							<a
+								className='nav-link text-white fw-bold'
+								style={{ letterSpacing: '1px' }}>
+								{`Welcome ${isAuthenticated().name}`}
+							</a>
+						</Link>
+					</li>
+				)}
 
-			{isAuthenticated() && isAuthenticated().role === 'suscriber' && (
-				<li className='nav-item ms-auto'>
-					<Link href='/user'>
-						<a
-							className='nav-link text-white fw-bold'
-							style={{ letterSpacing: '1px' }}>
-							{`Welcome ${isAuthenticated().name}`}
-						</a>
-					</Link>
-				</li>
-			)}
-			{isAuthenticated() && (
+			{typeof window !== 'undefined' &&
+				isAuthenticated() &&
+				isAuthenticated().role === 'suscriber' && (
+					<li className='nav-item ms-auto'>
+						<Link href='/user'>
+							<a
+								className='nav-link text-white fw-bold'
+								style={{ letterSpacing: '1px' }}>
+								{`Welcome ${isAuthenticated().name}`}
+							</a>
+						</Link>
+					</li>
+				)}
+			{typeof window !== 'undefined' && isAuthenticated() && (
 				<li className='nav-item'>
 					<a
 						className='nav-link text-white fw-bold'
